@@ -6,4 +6,6 @@ class Coupon:
         self.minimum_amount=minimum_amount
         self.expired_at=expired_at
         self.is_used=is_used
-        self.coupon_id=coupon_id
+        self.coupon_id=coupon_id 
+
+                                              

@@ -4,4 +4,3 @@ class Customer:
         self.last_name=last_name
         self.mobile_number=mobile_number
         self.customer_id=customer_id
-
