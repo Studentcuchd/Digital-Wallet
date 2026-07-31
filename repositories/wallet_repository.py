@@ -63,10 +63,11 @@ class WalletRepository:
         
         
     def update_balance(self,wallet_id,balance):
-        with self.connection:
-            self.cursor.execute("""
-            UPDATE wallets
-            SET balance=?
-            WHERE wallet_id=?
-            """,
-            (balance,wallet_id))
+        self.cursor.execute("""
+        UPDATE wallets
+        SET balance=?
+        WHERE wallet_id=?
+        """,
+        (balance,wallet_id))
+            
+    

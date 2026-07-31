@@ -3,8 +3,9 @@ from datetime import datetime
 from models.transaction import Transaction
 
 from repositories.wallet_repository import WalletRepository
-from repositories.customer_repository import CustomerRepository
+
 from repositories.transaction_repository import TransactionRepository
+
 
 class TransactionService:
     def __init__(self,transaction_repository,wallet_repository):
@@ -24,6 +25,7 @@ class TransactionService:
         
         return transaction_obj
         
+        
     
     def transfer_money(self,sender_number,receiver_number,amount):
         sender_wallet_obj=self.wallet_repository.get_wallet_by_number(sender_number)
@@ -34,24 +36,32 @@ class TransactionService:
         if receiver_wallet_obj is None:
             raise ValueError("The entered receiver number does not exist")
         
+        try:
         
-        sender_wallet_obj.withdraw_money(amount)
-        receiver_wallet_obj.add_balance(amount)
+            sender_wallet_obj.withdraw_money(amount)
+            receiver_wallet_obj.add_balance(amount)
 
         
-        self.wallet_repository.update_balance(sender_wallet_obj.wallet_id,sender_wallet_obj.balance)
-        self.wallet_repository.update_balance(receiver_wallet_obj.wallet_id,receiver_wallet_obj.balance)
-        
-        return self.create_transaction(
-            sender_wallet_obj.wallet_id,
-            receiver_wallet_obj.wallet_id,
-            amount=amount,
-            transaction_type="Transfer",
-            status="Success",
-            created_at=datetime.now()
+            self.wallet_repository.update_balance(sender_wallet_obj.wallet_id,sender_wallet_obj.balance)
+            self.wallet_repository.update_balance(receiver_wallet_obj.wallet_id,receiver_wallet_obj.balance)
             
-        )
+       
+            transaction= self.create_transaction(
+                sender_wallet_obj.wallet_id,
+                receiver_wallet_obj.wallet_id,
+                amount=amount,
+                transaction_type="Transfer",
+                status="Success",
+                created_at=datetime.now()
+            )
+            self.wallet_repository.database.commit()
+            return transaction
+                    
+        except Exception:
+            self.wallet_repository.database.rollback()
+            raise 
 
+        
         
         
         

@@ -1,5 +1,6 @@
 from databasefile.database import DataBase
 from models.coupon import Coupon
+from models.coupondetails import CouponDetails
 
 class CouponRepository:
     def __init__(self,database):
@@ -21,7 +22,7 @@ class CouponRepository:
     def get_coupons(self,wallet_id):
         with self.connection:
             self.cursor.execute(""" 
-            SELECT coupon_id,wallet_id,code,discount_amount,minimum_amount,expired_at,is_used
+            SELECT code,discount_amount,minimum_amount,expired_at,is_used
             FROM coupons
             WHERE wallet_id=?
             """,
@@ -33,11 +34,9 @@ class CouponRepository:
             if not row:
                 return []
             
-            for coupon_id,wallet_id,code,discount_amount,minimum_amount,expired_at,is_used in row:
+            for code,discount_amount,minimum_amount,expired_at,is_used in row:
                 coupon_list.append(
-                    Coupon(
-                        coupon_id=coupon_id,
-                        wallet_id=wallet_id,
+                    CouponDetails(
                         code=code,
                         discount_amount=discount_amount,
                         minimum_amount=minimum_amount,
