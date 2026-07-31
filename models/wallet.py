@@ -4,6 +4,7 @@ class Wallet:
         self.balance=balance
         self.wallet_id=wallet_id
     
+    
     def add_balance(self,amount):
         
         if amount<0:

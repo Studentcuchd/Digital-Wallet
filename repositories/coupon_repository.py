@@ -17,4 +17,33 @@ class CouponRepository:
             )
             coupon.coupon_id=self.cursor.lastrowid
             
+    
+    def get_coupons(self,wallet_id):
+        with self.connection:
+            self.cursor.execute(""" 
+            SELECT coupon_id,wallet_id,code,discount_amount,minimum_amount,expired_at,is_used
+            FROM coupons
+            WHERE wallet_id=?
+            """,
+            (wallet_id,))
             
+            coupon_list=[]
+            
+            row=self.cursor.fetchall()
+            if not row:
+                return []
+            
+            for coupon_id,wallet_id,code,discount_amount,minimum_amount,expired_at,is_used in row:
+                coupon_list.append(
+                    Coupon(
+                        coupon_id=coupon_id,
+                        wallet_id=wallet_id,
+                        code=code,
+                        discount_amount=discount_amount,
+                        minimum_amount=minimum_amount,
+                        expired_at=expired_at,
+                        is_used=is_used
+                    )
+                )
+        return coupon_list   
+        

@@ -17,3 +17,56 @@ class WalletRepository:
             )
             wallet.wallet_id=self.cursor.lastrowid
     
+    
+    # def get_wallet_obj(self,customer_id):
+    #     with self.connection:
+    #         self.cursor.execute("""
+    #         SELECT wallet_id,customer_id,balance
+    #         FROM wallets 
+    #         WHERE customer_id=?
+    #         """,
+    #         (customer_id,))
+        
+    #     row=self.cursor.fetchone()
+        
+    #     if row is None:
+    #         return None
+        
+    #     return Wallet(
+    #         wallet_id=row[0],
+    #         customer_id=row[1],
+    #         balance=row[2]
+    #     )
+    
+    def get_wallet_by_number(self,number):
+        with self.connection:
+            self.cursor.execute("""
+            SELECT wallets.wallet_id,wallets.customer_id,wallets.balance
+            FROM wallets
+            JOIN customers
+            ON wallets.customer_id=customers.customer_id
+            WHERE customers.mobile_number=?
+            """,
+            (number,))
+            
+        row=self.cursor.fetchone()
+        
+        if row is None:
+            return None
+        
+        return Wallet(
+            wallet_id=row[0],
+            customer_id=row[1],
+            balance=row[2]
+        )
+        
+        
+        
+    def update_balance(self,wallet_id,balance):
+        with self.connection:
+            self.cursor.execute("""
+            UPDATE wallets
+            SET balance=?
+            WHERE wallet_id=?
+            """,
+            (balance,wallet_id))
