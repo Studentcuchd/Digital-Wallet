@@ -1,4 +1,3 @@
-from datetime import date
 
 from datetime import date,timedelta
 from models.coupon import Coupon
@@ -43,7 +42,7 @@ class CouponService:
         for coupon in coupon_list:
             
             if coupon.code==code:   
-                if coupon.expired_at<date.today():
+                if coupon.expired_at<str(date.today()):
                     raise ValueError("Coupon has expired already")
             
                 if coupon.is_used:

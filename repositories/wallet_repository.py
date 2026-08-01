@@ -17,26 +17,7 @@ class WalletRepository:
             )
             wallet.wallet_id=self.cursor.lastrowid
     
-    
-    # def get_wallet_obj(self,customer_id):
-    #     with self.connection:
-    #         self.cursor.execute("""
-    #         SELECT wallet_id,customer_id,balance
-    #         FROM wallets 
-    #         WHERE customer_id=?
-    #         """,
-    #         (customer_id,))
-        
-    #     row=self.cursor.fetchone()
-        
-    #     if row is None:
-    #         return None
-        
-    #     return Wallet(
-    #         wallet_id=row[0],
-    #         customer_id=row[1],
-    #         balance=row[2]
-    #     )
+
     
     def get_wallet_by_number(self,number):
         with self.connection:

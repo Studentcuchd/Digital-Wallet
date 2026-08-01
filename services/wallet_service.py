@@ -2,12 +2,15 @@ from models.wallet import Wallet
 
 from repositories.customer_repository import CustomerRepository
 from repositories.wallet_repository import WalletRepository
+from services.coupon_service import CouponService
 
 class WalletService:
     
-    def __init__(self,wallet_repository,customer_repository):
+    def __init__(self,wallet_repository,customer_repository,coupon_service):
         self.wallet_repository=wallet_repository
         self.customer_repository=customer_repository
+        self.coupon_service=coupon_service
+        
     
     
     def add_wallet(self,mobile_number):
@@ -22,7 +25,7 @@ class WalletService:
         )
         
         self.wallet_repository.create_wallet(wallet_obj) 
-        
+        self.coupon_service.generate_coupon(wallet_obj.wallet_id)
         return wallet_obj
            
         

@@ -89,10 +89,10 @@ class TransactionService:
                 status="Success",
                 created_at=datetime.now()
             )
-            self.add_cashback(transaction)
+            cashback=self.add_cashback(transaction)
             
             self.wallet_repository.database.commit()
-            return transaction
+            return transaction,cashback
                     
         except Exception:
             self.wallet_repository.database.rollback()
@@ -114,9 +114,16 @@ class TransactionService:
             balance=self.wallet_repository.get_balance(transaction_makepayment_obj.sender_wallet_id)
             balance+=cashback
             self.wallet_repository.update_balance(transaction_makepayment_obj.sender_wallet_id,balance)
-                
-   
+            return cashback   
+
+        return 0
         
+    def get_transaction_history(self, mobile_number):
+        wallet_obj = self.wallet_repository.get_wallet_by_number(mobile_number)
+
+        if wallet_obj is None:
+            raise ValueError("No wallet exists for this mobile number")
+
+        return self.transaction_repository.get_all_transaction(wallet_obj.wallet_id)       
         
-    
         
