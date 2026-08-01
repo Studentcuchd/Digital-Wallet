@@ -69,5 +69,16 @@ class WalletRepository:
         WHERE wallet_id=?
         """,
         (balance,wallet_id))
-            
+        
+    def get_balance(self,wallet_id):
+        self.cursor.execute(""" 
+        SELECT balance 
+        FROM wallets
+        WHERE wallet_id=?
+        """,
+        (wallet_id,))
+        
+        row=self.cursor.fetchone()
+        balance=row[0]
+        return balance
     

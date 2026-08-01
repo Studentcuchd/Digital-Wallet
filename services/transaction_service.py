@@ -60,8 +60,63 @@ class TransactionService:
         except Exception:
             self.wallet_repository.database.rollback()
             raise 
+        
+        
+    def make_payment(self,sender_number,receiver_number,amount):
+        sender_wallet_obj=self.wallet_repository.get_wallet_by_number(sender_number)
+        receiver_wallet_obj=self.wallet_repository.get_wallet_by_number(receiver_number)
+        
+        if sender_wallet_obj is None:
+            raise ValueError("Entered number is not registered yet")
+        if receiver_wallet_obj is None:
+            raise ValueError("The entered receiver number does not exist")
+        
+        try:
+        
+            sender_wallet_obj.withdraw_money(amount)
+            receiver_wallet_obj.add_balance(amount)
 
         
+            self.wallet_repository.update_balance(sender_wallet_obj.wallet_id,sender_wallet_obj.balance)
+            self.wallet_repository.update_balance(receiver_wallet_obj.wallet_id,receiver_wallet_obj.balance)
+            
+       
+            transaction= self.create_transaction(
+                sender_wallet_obj.wallet_id,
+                receiver_wallet_obj.wallet_id,
+                amount=amount,
+                transaction_type="Payment",
+                status="Success",
+                created_at=datetime.now()
+            )
+            self.add_cashback(transaction)
+            
+            self.wallet_repository.database.commit()
+            return transaction
+                    
+        except Exception:
+            self.wallet_repository.database.rollback()
+            raise 
+
+    
+    def get_spending_summary(self,mobile_number):
+        wallet_obj=self.wallet_repository.get_wallet_by_number(mobile_number)
+        if wallet_obj is None:
+            raise ValueError("No wallet exist for this mobile number")
+        
+        return self.transaction_repository.get_spend_summary(wallet_obj.wallet_id)
+    
+    
+    def add_cashback(self,transaction_makepayment_obj):
+            
+        if transaction_makepayment_obj.amount>=300:
+            cashback=min((transaction_makepayment_obj.amount)//10,100)
+            balance=self.wallet_repository.get_balance(transaction_makepayment_obj.sender_wallet_id)
+            balance+=cashback
+            self.wallet_repository.update_balance(transaction_makepayment_obj.sender_wallet_id,balance)
+                
+   
         
         
+    
         

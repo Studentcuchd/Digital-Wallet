@@ -19,7 +19,7 @@ class CouponRepository:
             coupon.coupon_id=self.cursor.lastrowid
             
     
-    def get_coupons(self,wallet_id):
+    def get_all_coupons(self,wallet_id):
         with self.connection:
             self.cursor.execute(""" 
             SELECT code,discount_amount,minimum_amount,expired_at,is_used
@@ -44,5 +44,16 @@ class CouponRepository:
                         is_used=is_used
                     )
                 )
-        return coupon_list   
+        return coupon_list
+    
+    def update_coupon_status(self,wallet_id,code):
+        with self.connection:
+            self.cursor.execute(""" 
+               UPDATE coupons
+               SET is_used=1
+               WHERE wallet_id=?
+               AND code=?              
+            """,
+            (wallet_id,code))
+       
         
