@@ -16,7 +16,7 @@ class TransactionRepository:
         VALUES(?,?,?,?,?,?)
         """,
         (transaction.sender_wallet_id,transaction.receiver_wallet_id,transaction.amount,transaction.transaction_type,transaction.status,transaction.created_at)
-        )
+        ) 
         transaction.transaction_id=self.cursor.lastrowid
         
     
